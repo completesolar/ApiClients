@@ -1,0 +1,44 @@
+{
+    "name": "completesolar/helioresource",
+    "type": "project",
+    "description": "Logic to give access to your app using API keys.",
+    "license": "MIT",
+    "require": {
+        "php": "^7.1.3",
+        "illuminate/contracts": "^5.5",
+        "illuminate/database": "^5.5",
+        "illuminate/routing": "^5.5",
+        "illuminate/support": "^5.5",
+        "illuminate/view": "^5.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CompleteSolar\\ApiClients\\ApiClientServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-4": {
+            "CompleteSolar\\ApiClients\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CompleteSolar\\ApiClients\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
