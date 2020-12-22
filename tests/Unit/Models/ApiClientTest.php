@@ -2,8 +2,10 @@
 
 namespace CompleteSolar\ApiClients\Tests\Unit\Models;
 
+use BadMethodCallException;
 use CompleteSolar\ApiClients\Models\ApiClient;
 use CompleteSolar\ApiClients\Tests\TestCase;
+use ReflectionClass;
 
 class ApiClientTest extends TestCase
 {
@@ -94,5 +96,62 @@ class ApiClientTest extends TestCase
 
         $this->assertFalse($apiClient->hasScope($notRelatedScope->name), 'We should be able to check scope by name.');
         $this->assertFalse($apiClient->hasScope($notRelatedScope), 'We should be able to check scope by scope model.');
+    }
+
+    public function testIsActiveCastsToBool()
+    {
+        $apiClient = new ApiClient(['is_active' => '1']);
+        $this->assertSame(true, $apiClient->is_active);
+    }
+
+    /**
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getAuthIdentifierName()
+     */
+    public function testGetAuthIdentifierName()
+    {
+        $apiClient = new ApiClient();
+        $this->assertEquals('api_key', $apiClient->getAuthIdentifierName());
+    }
+
+    /**
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getAuthIdentifier()
+     */
+    public function testGetAuthIdentifier()
+    {
+        $apiClient = $this->createApiClient();
+        $this->assertSame($apiClient->api_key, $apiClient->getAuthIdentifier());
+    }
+
+    /**
+     * @dataProvider getNotImplementedMethods
+     * @param string $method
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::notImplemented()
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getAuthPassword()
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getRememberToken()
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::setRememberToken()
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getRememberTokenName()
+     */
+    public function testNotImplementedMethods(string $methodName)
+    {
+        $apiClient = new ApiClient();
+        $reflection = new ReflectionClass(ApiClient::class);
+        $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
+
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Not applicable for this model');
+
+        $method->invoke($apiClient, 'optional-param');
+    }
+
+    public function getNotImplementedMethods()
+    {
+        return [
+            ['notImplemented'],
+            ['getAuthPassword'],
+            ['getRememberToken'],
+            ['setRememberToken'],
+            ['getRememberTokenName'],
+        ];
     }
 }

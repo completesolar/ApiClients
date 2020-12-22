@@ -2,9 +2,9 @@
 
 namespace CompleteSolar\ApiClients\Http;
 
+use App\Http\Controllers\Controller; # This is default laravel controller
 use CompleteSolar\ApiClients\Models\ApiClient;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 
 class ApiClientController extends Controller
 {
@@ -26,7 +26,7 @@ class ApiClientController extends Controller
      */
     public function store(StoreApiClient $request)
     {
-        $apiClient = new ApiClient($this->validate($request, $request->rules()));
+        $apiClient = new ApiClient($request->validated());
 
         if(!$apiClient->save()) {
             return $apiClient;
@@ -54,7 +54,7 @@ class ApiClientController extends Controller
      */
     public function update(StoreApiClient $request, ApiClient $apiClient)
     {
-        $validatedFields = $this->validate($request, $request->rules());
+        $validatedFields = $request->validated();
 
         if ($validatedFields['refresh_api_key']) {
             $apiClient->setApiKey();

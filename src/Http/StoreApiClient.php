@@ -2,9 +2,9 @@
 
 namespace CompleteSolar\ApiClients\Http;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest; # laravel built-in form request
 
-class StoreApiClient extends Request
+class StoreApiClient extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

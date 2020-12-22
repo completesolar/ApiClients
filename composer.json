@@ -1,5 +1,5 @@
 {
-    "name": "completesolar/helioresource",
+    "name": "completesolar/api-clients",
     "type": "project",
     "description": "Logic to give access to your app using API keys.",
     "license": "MIT",

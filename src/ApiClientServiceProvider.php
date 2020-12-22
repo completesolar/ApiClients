@@ -16,7 +16,5 @@ class ApiClientServiceProvider extends ServiceProvider
                 ),
             ]
         );
-
-        $this->loadRoutesFrom(__DIR__.'/Http/routes.php');
     }
 }

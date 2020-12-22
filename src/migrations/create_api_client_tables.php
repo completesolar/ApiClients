@@ -49,7 +49,7 @@ class CreateApiClientTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('api_client_scopes');
+        Schema::dropIfExists('api_client_api_client_scope');
         Schema::dropIfExists('api_client_scopes');
         Schema::dropIfExists('api_clients');
     }

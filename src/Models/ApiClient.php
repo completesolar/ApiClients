@@ -28,6 +28,10 @@ class ApiClient extends Model implements Authenticatable
         'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => 'bool'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -81,29 +85,29 @@ class ApiClient extends Model implements Authenticatable
         return $this->api_key;
     }
 
-    protected function notSupported()
+    protected function notImplemented()
     {
         throw new BadMethodCallException('Not applicable for this model');
     }
 
     public function getAuthPassword()
     {
-        $this->notSupported();
+        $this->notImplemented();
     }
 
     public function getRememberToken()
     {
-        $this->notSupported();
+        $this->notImplemented();
     }
 
     public function setRememberToken($value)
     {
-        $this->notSupported();
+        $this->notImplemented();
     }
 
     public function getRememberTokenName()
     {
-        $this->notSupported();
+        $this->notImplemented();
     }
 
     /**
