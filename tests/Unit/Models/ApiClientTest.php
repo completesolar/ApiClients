@@ -1,10 +1,11 @@
 <?php
 
-namespace CompleteSolar\ApiClients\Tests\Unit\Models;
+namespace CompleteSolar\ApiClientsTests\Unit\Models;
 
 use BadMethodCallException;
 use CompleteSolar\ApiClients\Models\ApiClient;
-use CompleteSolar\ApiClients\Tests\TestCase;
+use CompleteSolar\ApiClientsTests\TestCase;
+use Illuminate\Database\Eloquent\Collection;
 use ReflectionClass;
 
 class ApiClientTest extends TestCase
@@ -76,7 +77,6 @@ class ApiClientTest extends TestCase
         $scope = $this->createScope();
         $apiClient->scopes()->save($scope);
         $this->assertEquals(1, $apiClient->scopes()->count());
-
     }
 
     /**
@@ -84,7 +84,6 @@ class ApiClientTest extends TestCase
      */
     public function testHasScope()
     {
-        /** @var ApiClient $apiClient */
         $apiClient = $this->createApiClient();
 
         $relatedScope = $this->createScope();
@@ -125,11 +124,11 @@ class ApiClientTest extends TestCase
     /**
      * @dataProvider getNotImplementedMethods
      * @param string $method
-     * @covers \CompleteSolar\ApiClients\Models\ApiClient::notImplemented()
-     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getAuthPassword()
-     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getRememberToken()
-     * @covers \CompleteSolar\ApiClients\Models\ApiClient::setRememberToken()
-     * @covers \CompleteSolar\ApiClients\Models\ApiClient::getRememberTokenName()
+     * @covers       \CompleteSolar\ApiClients\Models\ApiClient::notImplemented()
+     * @covers       \CompleteSolar\ApiClients\Models\ApiClient::getAuthPassword()
+     * @covers       \CompleteSolar\ApiClients\Models\ApiClient::getRememberToken()
+     * @covers       \CompleteSolar\ApiClients\Models\ApiClient::setRememberToken()
+     * @covers       \CompleteSolar\ApiClients\Models\ApiClient::getRememberTokenName()
      */
     public function testNotImplementedMethods(string $methodName)
     {
@@ -153,5 +152,35 @@ class ApiClientTest extends TestCase
             ['setRememberToken'],
             ['getRememberTokenName'],
         ];
+    }
+
+    /**
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::findByScope()
+     */
+    public function testFindByScope()
+    {
+        $apiClient = $this->createApiClient();
+        $scopesWithApiClients = $this->createScope();
+        $apiClient->scopes()->save($scopesWithApiClients);
+
+        $apiClients = ApiClient::findByScope($scopesWithApiClients->name);
+
+        $this->assertInstanceOf(Collection::class, $apiClients);
+        $this->assertCount(1, $apiClients);
+        $this->assertEquals($apiClient->id, $apiClients->first()->id);
+    }
+
+    /**
+     * @covers \CompleteSolar\ApiClients\Models\ApiClient::findByScope()
+     */
+    public function testFindByScopeWithoutApiClientsAttached()
+    {
+        $apiClient = $this->createApiClient();
+        $scopeWithoutApiClients = $this->createScope();
+
+        $apiClients = ApiClient::findByScope($scopeWithoutApiClients->name);
+
+        $this->assertInstanceOf(Collection::class, $apiClients);
+        $this->assertCount(0, $apiClients);
     }
 }

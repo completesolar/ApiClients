@@ -36,7 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "CompleteSolar\\ApiClients\\Tests\\": "tests/"
+            "CompleteSolar\\ApiClientsTests\\": "tests/"
         }
     },
     "minimum-stability": "dev",

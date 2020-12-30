@@ -1,8 +1,8 @@
 <?php
 
-namespace CompleteSolar\ApiClients\Tests\Traits;
+namespace CompleteSolar\ApiClientsTests\Unit\Traits;
 
-use CompleteSolar\ApiClients\Tests\TestCase;
+use CompleteSolar\ApiClientsTests\TestCase;
 use CompleteSolar\ApiClients\Traits\WithApiClient;
 use Illuminate\Database\Eloquent\Model;
 

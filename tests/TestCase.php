@@ -1,6 +1,6 @@
 <?php
 
-namespace CompleteSolar\ApiClients\Tests;
+namespace CompleteSolar\ApiClientsTests;
 
 use CompleteSolar\ApiClients\Models\ApiClient;
 use CompleteSolar\ApiClients\Models\ApiClientScope;

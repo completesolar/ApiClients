@@ -1,7 +1,7 @@
 <?php
 
-use CompleteSolar\ApiClients\Tests\TestApplication;
-use CompleteSolar\ApiClients\Tests\TestEventDispatcher;
+use CompleteSolar\ApiClientsTests\TestApplication;
+use CompleteSolar\ApiClientsTests\TestEventDispatcher;
 use Illuminate\Database\ConnectionResolver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\SQLiteConnection;

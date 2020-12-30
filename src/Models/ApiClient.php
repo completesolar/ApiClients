@@ -5,6 +5,7 @@ namespace CompleteSolar\ApiClients\Models;
 use BadMethodCallException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
@@ -136,12 +137,12 @@ class ApiClient extends Model implements Authenticatable
     }
 
     /**
-     * Find By Scope
+     * Find all api clients that has provided scope.
      *
      * @param $name
-     * @return mixed
+     * @return ApiClient[]
      */
-    public static function findByScope($name)
+    public static function findByScope(string $name): Collection
     {
         return self::whereHas(
             'scopes',

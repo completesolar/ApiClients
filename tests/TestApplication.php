@@ -4,7 +4,7 @@
  * Date and time: 22/12/2020 12:26
  */
 
-namespace CompleteSolar\ApiClients\Tests;
+namespace CompleteSolar\ApiClientsTests;
 
 use ArrayAccess;
 use Closure;

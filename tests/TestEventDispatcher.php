@@ -4,12 +4,9 @@
  * Date and time: 22/12/2020 12:26
  */
 
-namespace CompleteSolar\ApiClients\Tests;
+namespace CompleteSolar\ApiClientsTests;
 
-use ArrayAccess;
-use Closure;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
 
 class TestEventDispatcher implements Dispatcher
 {
