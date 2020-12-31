@@ -9,9 +9,9 @@ interface ApiClientNotifiableEvent
     /**
      * Get Api Client
      *
-     * @return mixed
+     * @return ApiClient|null
      */
-    public function getApiClient(): ApiClient;
+    public function getApiClient(): ?ApiClient;
 
     /**
      * The data we send to webhook

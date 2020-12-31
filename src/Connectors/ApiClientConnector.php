@@ -49,8 +49,11 @@ class ApiClientConnector
     public static function notifyAboutEvent(ApiClientNotifiableEvent $event): void
     {
         $apiClient = $event->getApiClient();
-        $connector = new self($apiClient);
-        $connector->callWebhook($event->getWebhookData());
+
+        if ($apiClient && $apiClient->webhook_url) {
+            $connector = new self($apiClient);
+            $connector->callWebhook($event->getWebhookData());
+        }
     }
 
     /**
