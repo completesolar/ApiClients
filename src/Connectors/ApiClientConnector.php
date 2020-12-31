@@ -1,27 +1,29 @@
 <?php
 
-
-
 namespace CompleteSolar\ApiClients\Connectors;
-
 
 use CompleteSolar\ApiClients\Events\ApiClientNotifiableEvent;
 use CompleteSolar\ApiClients\Models\ApiClient;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
+use function json_encode;
+
 class ApiClientConnector
 {
-
-    public const HEADER_API_KEY = 'x-api-key';
-
-    protected $url;
+    /**
+     * @var ApiClient
+     */
     protected $apiClient;
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     public function __construct(ApiClient $apiClient)
     {
         $this->apiClient = $apiClient;
-
         $this->client = new Client();
     }
 
@@ -33,7 +35,7 @@ class ApiClientConnector
     protected function headers(): array
     {
         return [
-            self::HEADER_API_KEY => $this->apiClient->apiKey,
+            ApiClient::getHeaderKey() => $this->apiClient->api_key,
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
         ];
@@ -58,9 +60,13 @@ class ApiClientConnector
      */
     public function callWebhook(array $data): void
     {
-        Log::debug('sending clientId='.$this->apiClient->id.' webhook='.$this->apiClient->webhook_url, $data);
+        Log::debug('Calling api client webhook', [
+            'clientId' => $this->apiClient->id,
+            'webhook' => $this->apiClient->webhook_url,
+            'data' => $data,
+        ]);
 
-        $body = \json_encode($data, JSON_PRETTY_PRINT);
+        $body = json_encode($data);
         $response = $this->client->post(
             $this->apiClient->webhook_url,
             [
