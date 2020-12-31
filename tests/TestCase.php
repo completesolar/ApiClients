@@ -5,6 +5,8 @@ namespace CompleteSolar\ApiClientsTests;
 use CompleteSolar\ApiClients\Models\ApiClient;
 use CompleteSolar\ApiClients\Models\ApiClientScope;
 use CreateApiClientTables;
+use ReflectionClass;
+use ReflectionException;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -41,5 +43,56 @@ class TestCase extends \PHPUnit\Framework\TestCase
             'name' => $name ?? uniqid('api_client'),
             'webhook_url' => 'http://test.url/webhook',
         ]);
+    }
+
+    /**
+     * Returns protected property value of the object.
+     *
+     * @param object $object
+     * @param string $propertyName
+     * @return mixed
+     * @throws ReflectionException
+     */
+    protected function getObjectProperty($object, string $propertyName)
+    {
+        $reflection = new ReflectionClass($object);
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+        return $property->getValue($object);
+    }
+
+    /**
+     * Updates protected property value of the object.
+     *
+     * @param object $object
+     * @param string $propertyName
+     * @param mixed $newValue
+     * @return self
+     * @throws ReflectionException
+     */
+    protected function setObjectProperty($object, string $propertyName, $newValue)
+    {
+        $reflection = new ReflectionClass($object);
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $newValue);
+        return $this;
+    }
+
+    /**
+     * Invokes protected method of the object.
+     *
+     * @param object $object
+     * @param string $methodName
+     * @param array $methodParams
+     * @return mixed
+     * @throws ReflectionException
+     */
+    protected function invokeObjectMethod($object, string $methodName, array $methodParams = [])
+    {
+        $reflection = new ReflectionClass($object);
+        $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
+        return $method->invokeArgs($object, $methodParams);
     }
 }

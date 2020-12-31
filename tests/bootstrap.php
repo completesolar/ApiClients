@@ -25,6 +25,12 @@ $connectionResolver = new ConnectionResolver(['sqlite' => $connection]);
 $connectionResolver->setDefaultConnection('sqlite');
 
 $testApplication['db'] = $connectionResolver;
+$testApplication['log'] = new class { // TODO create a MemoryLogger
+    public function debug()
+    {
+
+    }
+};
 
 Facade::setFacadeApplication($testApplication);
 Model::setConnectionResolver($connectionResolver);
