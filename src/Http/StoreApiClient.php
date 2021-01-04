@@ -13,12 +13,12 @@ class StoreApiClient extends FormRequest
      */
     public function rules()
     {
-        $apiClient = (int) $this->route('api_client');
+        $apiClient = (int) $this->route('client');
 
         return [
             'name' => 'required|unique:api_clients,name,' . $apiClient . '|max:255',
             'is_active' => 'required|boolean',
-            'webhook_url' => 'nullable',
+            'webhook_url' => 'required|string',
             'refresh_api_key' => 'nullable|boolean',
         ];
     }
