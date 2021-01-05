@@ -151,4 +151,9 @@ class ApiClient extends Model implements Authenticatable
             }
         )->get();
     }
+
+    public function scopeFindByApiKey($query, $apiKey)
+    {
+        return $query->where('api_key', $apiKey)->firstOrFail();
+    }
 }

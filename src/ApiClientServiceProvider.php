@@ -18,23 +18,13 @@ class ApiClientServiceProvider extends ServiceProvider
             'migrations'
         );
 
-        $this->loadRoutes();
         $this->publishRoutes();
     }
 
     protected function publishRoutes()
     {
         $this->publishes([
-            __DIR__ . 'Http/api_clients_routes.php' => $this->app->basePath() . '/routes',
+            __DIR__ . '/Http/api_clients_routes.php' => $this->app->basePath() . '/routes/api_clients_routes.php',
         ], 'routes');
-    }
-
-    protected function loadRoutes()
-    {
-        $fileName = 'api_clients_routes.php';
-
-        if (!file_exists($this->app->basePath() . '/routes/' . $fileName)) {
-            $this->loadRoutesFrom(__DIR__ . '/Http/' .  $fileName);
-        }
     }
 }

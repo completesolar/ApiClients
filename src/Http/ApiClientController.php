@@ -4,6 +4,9 @@ namespace CompleteSolar\ApiClients\Http;
 
 use App\Http\Controllers\Controller; # This is default laravel controller
 use CompleteSolar\ApiClients\Models\ApiClient;
+use CompleteSolar\ApiClients\Models\ApiClientScope;
+use CompleteSolar\ApiClients\Http\Requests\ApiClientStore;
+use CompleteSolar\ApiClients\Http\Requests\ApiClientUpdate;
 use Illuminate\Http\Request;
 
 class ApiClientController extends Controller
@@ -19,20 +22,19 @@ class ApiClientController extends Controller
         return ApiClient::all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  StoreApiClient  $request
-     */
-    public function store(StoreApiClient $request)
+    public function store(ApiClientStore $request)
     {
         $apiClient = new ApiClient($request->validated());
 
         if(!$apiClient->save()) {
-            return $apiClient;
+            return abort(400, 'Cannot save the API client.');
         }
 
-        return abort(400, 'Cannot save the API client.');
+        $apiClient->scopes()->attach(
+            ApiClientScope::findByNames($request->input('scopes', []))->pluck('id')->toArray()
+        );
+
+        return $apiClient;
     }
 
     /**
@@ -46,27 +48,48 @@ class ApiClientController extends Controller
         return $apiClient;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  StoreApiClient  $request
-     * @param  ApiClient  $apiClient
-     */
-    public function update(StoreApiClient $request, ApiClient $apiClient)
+    public function update(ApiClientUpdate $request)
     {
-        $validatedFields = $request->validated();
+        $apiClient = $this->findApiClientByApiKey($request);
 
-        if ($validatedFields['refresh_api_key']) {
+        if ($request->input('refresh_api_key')) {
             $apiClient->setApiKey();
         }
-        unset($validatedFields['refresh_api_key']);
 
-        $apiClient->fill($validatedFields);
-
-        if(!$apiClient->update($validatedFields)) {
+        if(!$apiClient->update($request->validated())) {
             return abort(400, 'Cannot save the API client.');
         }
 
         return $apiClient;
+    }
+
+    public function updateScopes(Request $request)
+    {
+        $apiClient = $this->findApiClientByApiKey($request);
+
+        $apiClient->scopes()->sync(
+            ApiClientScope::findByNames($request->input('scopes'))->pluck('id')->toArray(),
+            $request->input('sync')
+        );
+
+        return $apiClient;
+    }
+
+    public function triggerScope(Request $request, ApiClientScope $apiClientScope)
+    {
+        $apiClient = $this->findApiClientByApiKey($request);
+
+        if ($apiClient->scopes()->name($apiClientScope->name)->exists()) {
+            $apiClient->scopes()->detach($apiClientScope);
+        } else {
+            $apiClient->scopes()->attach($apiClientScope);
+        }
+
+        return $apiClient;
+    }
+
+    protected function findApiClientByApiKey(Request $request): ApiClient
+    {
+        return ApiClient::findByApiKey($request->header(ApiCLient::getHeaderKey()));
     }
 }
