@@ -6,8 +6,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateApiClientTables extends Migration
 {
-
-
     /**
      * Run the migrations.
      *

@@ -3,26 +3,22 @@
 namespace CompleteSolar\ApiClients\Http;
 
 use App\Http\Controllers\Controller; # This is default laravel controller
+use CompleteSolar\ApiClients\Http\Requests\ApiScopesUpdate;
 use CompleteSolar\ApiClients\Models\ApiClient;
 use CompleteSolar\ApiClients\Models\ApiClientScope;
 use CompleteSolar\ApiClients\Http\Requests\ApiClientStore;
 use CompleteSolar\ApiClients\Http\Requests\ApiClientUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class ApiClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  Request  $request
-     * @return array
-     */
-    public function index()
+    public function index(): Collection
     {
         return ApiClient::all();
     }
 
-    public function store(ApiClientStore $request)
+    public function store(ApiClientStore $request): ApiClient
     {
         $apiClient = new ApiClient($request->validated());
 
@@ -37,18 +33,7 @@ class ApiClientController extends Controller
         return $apiClient;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Request  $request
-     * @param  ApiClient  $apiClient
-     */
-    public function edit(ApiClient $apiClient)
-    {
-        return $apiClient;
-    }
-
-    public function update(ApiClientUpdate $request)
+    public function update(ApiClientUpdate $request): ApiClient
     {
         $apiClient = $this->findApiClientByApiKey($request);
 
@@ -63,7 +48,7 @@ class ApiClientController extends Controller
         return $apiClient;
     }
 
-    public function updateScopes(Request $request)
+    public function updateScopes(ApiScopesUpdate $request): ApiClient
     {
         $apiClient = $this->findApiClientByApiKey($request);
 
@@ -75,11 +60,11 @@ class ApiClientController extends Controller
         return $apiClient;
     }
 
-    public function triggerScope(Request $request, ApiClientScope $apiClientScope)
+    public function triggerScope(Request $request, ApiClientScope $apiClientScope): ApiClient
     {
         $apiClient = $this->findApiClientByApiKey($request);
 
-        if ($apiClient->scopes()->name($apiClientScope->name)->exists()) {
+        if ($apiClient->scopes()->whereName($apiClientScope->name)->exists()) {
             $apiClient->scopes()->detach($apiClientScope);
         } else {
             $apiClient->scopes()->attach($apiClientScope);

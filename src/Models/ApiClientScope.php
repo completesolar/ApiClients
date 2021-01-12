@@ -2,24 +2,20 @@
 
 namespace CompleteSolar\ApiClients\Models;
 
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ApiClientScope extends Model
 {
     protected $fillable = ['name','description'];
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'name';
     }
 
-    public function scopeFindByNames($query, array $names = [])
+    public static function findByNames(array $names = []): Collection
     {
-        return $query->whereIn('name', $names)->get();
-    }
-
-    public function scopeName($query, string $name)
-    {
-        return $query->where('name', $name);
+        return static::whereIn('name', $names)->get();
     }
 }
