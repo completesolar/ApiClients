@@ -3,6 +3,7 @@
 namespace CompleteSolar\ApiClients\Models;
 
 use BadMethodCallException;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,8 +19,8 @@ use Illuminate\Support\Str;
  * @property string $api_key
  * @property string $webhook_url
  * @property bool $is_active
- * @property string $created_at
- * @property string $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property ApiClientScope[] $scopes
  */
 class ApiClient extends Model implements Authenticatable
@@ -34,7 +35,7 @@ class ApiClient extends Model implements Authenticatable
         'is_active' => 'bool'
     ];
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -43,21 +44,12 @@ class ApiClient extends Model implements Authenticatable
         });
     }
 
-    /**
-     * Returns long living access key. Used for server to server communication,
-     * grants access to available resources connected to an API client.
-     *
-     * @return string
-     */
-    public static function getHeaderKey()
+    public static function getHeaderKey(): string
     {
         return 'x-api-key';
     }
 
-    /**
-     * @return $this
-     */
-    public function setApiKey()
+    public function setApiKey(): self
     {
         do {
             $apiKey = Str::random(32); // We need to generate an unique API key.
@@ -67,22 +59,12 @@ class ApiClient extends Model implements Authenticatable
         return $this;
     }
 
-    /**
-     * Get the name of the unique identifier for the user.
-     *
-     * @return string
-     */
-    public function getAuthIdentifierName()
+    public function getAuthIdentifierName(): string
     {
         return 'api_key';
     }
 
-    /**
-     * Get the unique identifier for the user.
-     *
-     * @return mixed
-     */
-    public function getAuthIdentifier()
+    public function getAuthIdentifier(): string
     {
         return $this->api_key;
     }
@@ -112,11 +94,6 @@ class ApiClient extends Model implements Authenticatable
         $this->notImplemented();
     }
 
-    /**
-     * Returns scopes the client has access to.
-     *
-     * @return BelongsToMany
-     */
     public function scopes(): BelongsToMany
     {
         return $this->belongsToMany(ApiClientScope::class)->withTimestamps();
@@ -126,22 +103,16 @@ class ApiClient extends Model implements Authenticatable
      * Check if client has a scope.
      *
      * @param string|ApiClientScope $scope
-     * @return bool
      */
     public function hasScope($scope): bool
     {
         if ($scope instanceof ApiClientScope) {
             $scope = $scope->name;
         }
+
         return $this->scopes()->where('name', $scope)->exists();
     }
 
-    /**
-     * Find all api clients that has provided scope.
-     *
-     * @param $name
-     * @return ApiClient[]
-     */
     public static function findByScope(string $name): Collection
     {
         return self::whereHas(
@@ -150,5 +121,10 @@ class ApiClient extends Model implements Authenticatable
                 $query->where('name', $name);
             }
         )->get();
+    }
+
+    public static function findByApiKey($apiKey): ApiClient
+    {
+        return static::where('api_key', $apiKey)->firstOrFail();
     }
 }

@@ -6,8 +6,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateApiClientTables extends Migration
 {
-
-
     /**
      * Run the migrations.
      *
@@ -33,10 +31,16 @@ class CreateApiClientTables extends Migration
 
         Schema::create('api_client_api_client_scope', function (Blueprint $table) {
             $table->unsignedInteger('api_client_id')->nullable();
-            $table->foreign('api_client_id')->references('id')->on('api_clients');
+            $table->foreign('api_client_id')
+                ->references('id')
+                ->on('api_clients')
+                ->onDelete('cascade');
 
             $table->unsignedInteger('api_client_scope_id')->nullable();
-            $table->foreign('api_client_scope_id')->references('id')->on('api_client_scopes');
+            $table->foreign('api_client_scope_id')
+                ->references('id')
+                ->on('api_client_scopes')
+                ->onDelete('cascade');
 
             $table->timestamps();
         });
