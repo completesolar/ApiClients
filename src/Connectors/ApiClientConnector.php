@@ -6,6 +6,7 @@ use CompleteSolar\ApiClients\Events\ApiClientNotifiableEvent;
 use CompleteSolar\ApiClients\Models\ApiClient;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 use function json_encode;
 
@@ -44,24 +45,29 @@ class ApiClientConnector
     /**
      * Notify About Event
      *
-     * @param  ApiClientNotifiableEvent  $event
+     * @param ApiClientNotifiableEvent $event
+     * @return ResponseInterface|null
      */
-    public static function notifyAboutEvent(ApiClientNotifiableEvent $event): void
+    public static function notifyAboutEvent(ApiClientNotifiableEvent $event): ?ResponseInterface
     {
         $apiClient = $event->getApiClient();
 
         if ($apiClient && $apiClient->webhook_url) {
             $connector = new self($apiClient);
-            $connector->callWebhook($event->getWebhookData());
+
+            return $connector->callWebhook($event->getWebhookData());
         }
+
+        return null;
     }
 
     /**
      * Call Webhook
      *
-     * @param  array  $data
+     * @param array $data
+     * @return ResponseInterface
      */
-    public function callWebhook(array $data): void
+    public function callWebhook(array $data): ResponseInterface
     {
         Log::debug('Calling api client webhook', [
             'clientId' => $this->apiClient->id,
@@ -81,5 +87,7 @@ class ApiClientConnector
         if ($response->getStatusCode() >= 400) {
             Log::debug('webhook post failed');
         }
+
+        return $response;
     }
 }
