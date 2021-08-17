@@ -50,12 +50,17 @@ class ApiClientConnector
      */
     public static function notifyAboutEvent(ApiClientNotifiableEvent $event): ?ResponseInterface
     {
-        $apiClient = $event->getApiClient();
+        $apiClients = $event->getApiClients();
 
-        if ($apiClient && $apiClient->webhook_url) {
-            $connector = new self($apiClient);
+        foreach ($apiClients as $apiClient){
 
-            return $connector->callWebhook($event->getWebhookData());
+            if ($apiClient && $apiClient->webhook_url) {
+                $connector = new self($apiClient);
+
+                // TODO need added mechanism to retry failures from webhook
+
+                $connector->callWebhook($event->getWebhookData());
+            }
         }
 
         return null;
