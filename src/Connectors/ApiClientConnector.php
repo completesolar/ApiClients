@@ -57,7 +57,9 @@ class ApiClientConnector
             if ($apiClient && $apiClient->webhook_url) {
                 $connector = new self($apiClient);
 
-                return $connector->callWebhook($event->getWebhookData());
+                // TODO need added mechanism to retry failures from webhook
+
+                $connector->callWebhook($event->getWebhookData());
             }
         }
 
