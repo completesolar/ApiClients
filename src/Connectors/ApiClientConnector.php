@@ -69,10 +69,10 @@ class ApiClientConnector
     /**
      * Call Webhook
      *
-     * @param array $data
-     * @return ResponseInterface
+     * @param  array  $data
+     * @return void
      */
-    public function callWebhook(array $data): ResponseInterface
+    public function callWebhook(array $data): void
     {
         Log::debug('Calling api client webhook', [
             'clientId' => $this->apiClient->id,
@@ -81,18 +81,17 @@ class ApiClientConnector
         ]);
 
         $body = json_encode($data);
-        $response = $this->client->post(
-            $this->apiClient->webhook_url,
-            [
-                'body' => $body,
-                'headers' => $this->headers(),
-            ]
-        );
 
-        if ($response->getStatusCode() >= 400) {
-            Log::debug('webhook post failed');
+        try{
+            $this->client->post(
+                $this->apiClient->webhook_url,
+                [
+                    'body' => $body,
+                    'headers' => $this->headers(),
+                ]
+            );
+        }catch (\Exception $exception){
+            Log::debug('webhook post failed',['message' => $exception->getMessage()]);
         }
-
-        return $response;
     }
 }
