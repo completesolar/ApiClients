@@ -4,6 +4,7 @@ namespace CompleteSolar\ApiClients\Connectors;
 
 use CompleteSolar\ApiClients\Events\ApiClientNotifiableEvent;
 use CompleteSolar\ApiClients\Models\ApiClient;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
@@ -45,8 +46,9 @@ class ApiClientConnector
     /**
      * Notify About Event
      *
-     * @param ApiClientNotifiableEvent $event
+     * @param  ApiClientNotifiableEvent  $event
      * @return ResponseInterface|null
+     * @throws Exception
      */
     public static function notifyAboutEvent(ApiClientNotifiableEvent $event): ?ResponseInterface
     {
@@ -59,8 +61,16 @@ class ApiClientConnector
 
                 // TODO need added mechanism to retry failures from webhook
 
-                $connector->callWebhook($event->getWebhookData());
+                try {
+                    $connector->callWebhook($event->getWebhookData());
+                } catch (Exception $e) {
+                    $exception = $e;
+                }
             }
+        }
+
+        if (isset($exception)) {
+            throw new Exception($exception->getMessage());
         }
 
         return null;
@@ -69,10 +79,10 @@ class ApiClientConnector
     /**
      * Call Webhook
      *
-     * @param  array  $data
-     * @return void
+     * @param array $data
+     * @return ResponseInterface
      */
-    public function callWebhook(array $data): void
+    public function callWebhook(array $data): ResponseInterface
     {
         Log::debug('Calling api client webhook', [
             'clientId' => $this->apiClient->id,
@@ -81,17 +91,18 @@ class ApiClientConnector
         ]);
 
         $body = json_encode($data);
+        $response = $this->client->post(
+            $this->apiClient->webhook_url,
+            [
+                'body' => $body,
+                'headers' => $this->headers(),
+            ]
+        );
 
-        try{
-            $this->client->post(
-                $this->apiClient->webhook_url,
-                [
-                    'body' => $body,
-                    'headers' => $this->headers(),
-                ]
-            );
-        }catch (\Exception $exception){
-            Log::debug('webhook post failed',['message' => $exception->getMessage()]);
+        if ($response->getStatusCode() >= 400) {
+            Log::debug('webhook post failed');
         }
+
+        return $response;
     }
 }
