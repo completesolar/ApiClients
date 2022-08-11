@@ -28,11 +28,6 @@ class ApiClientConnector
         $this->client = new Client();
     }
 
-    /**
-     * Headers
-     *
-     * @return array
-     */
     protected function headers(): array
     {
         return [
@@ -42,12 +37,6 @@ class ApiClientConnector
         ];
     }
 
-    /**
-     * Notify About Event
-     *
-     * @param ApiClientNotifiableEvent $event
-     * @return ResponseInterface|null
-     */
     public static function notifyAboutEvent(ApiClientNotifiableEvent $event): ?ResponseInterface
     {
         $apiClient = $event->getApiClient();
@@ -61,12 +50,6 @@ class ApiClientConnector
         return null;
     }
 
-    /**
-     * Call Webhook
-     *
-     * @param array $data
-     * @return ResponseInterface
-     */
     public function callWebhook(array $data): ResponseInterface
     {
         Log::debug('Calling api client webhook', [

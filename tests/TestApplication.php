@@ -19,7 +19,7 @@ class TestApplication implements Application, ArrayAccess
         // TODO: Implement version() method.
     }
 
-    public function basePath()
+    public function basePath($path = '')
     {
         // TODO: Implement basePath() method.
     }
@@ -322,5 +322,10 @@ class TestApplication implements Application, ArrayAccess
     public function offsetUnset($offset)
     {
         unset($this->bindings[$offset]);
+    }
+
+    public function singletonIf($abstract, $concrete = null)
+    {
+        // TODO: Implement singletonIf() method.
     }
 }
