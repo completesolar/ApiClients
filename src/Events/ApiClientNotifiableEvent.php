@@ -2,16 +2,16 @@
 
 namespace CompleteSolar\ApiClients\Events;
 
-use CompleteSolar\ApiClients\Models\ApiClient;
+use Illuminate\Support\Collection;
 
 interface ApiClientNotifiableEvent
 {
     /**
-     * Get Api Client
+     * Get Api Clients
      *
-     * @return ApiClient|null
+     * @return Collection
      */
-    public function getApiClient(): ?ApiClient;
+    public function getApiClients(): Collection;
 
     /**
      * The data we send to webhook

@@ -4,6 +4,7 @@ namespace CompleteSolar\ApiClients\Connectors;
 
 use CompleteSolar\ApiClients\Events\ApiClientNotifiableEvent;
 use CompleteSolar\ApiClients\Models\ApiClient;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
@@ -37,14 +38,30 @@ class ApiClientConnector
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public static function notifyAboutEvent(ApiClientNotifiableEvent $event): ?ResponseInterface
     {
-        $apiClient = $event->getApiClient();
+        $apiClients = $event->getApiClients();
 
-        if ($apiClient && $apiClient->webhook_url) {
-            $connector = new self($apiClient);
+        foreach ($apiClients as $apiClient){
 
-            return $connector->callWebhook($event->getWebhookData());
+            if ($apiClient && $apiClient->webhook_url) {
+                $connector = new self($apiClient);
+
+                // TODO need added mechanism to retry failures from webhook
+
+                try {
+                    $connector->callWebhook($event->getWebhookData());
+                } catch (Exception $e) {
+                    $exception = $e;
+                }
+            }
+        }
+
+        if (isset($exception)) {
+            throw new Exception($exception->getMessage());
         }
 
         return null;
