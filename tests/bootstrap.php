@@ -8,7 +8,6 @@ use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Facade;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-echo 'test1';
 // Create app
 $testApplication = new TestApplication();
 

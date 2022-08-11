@@ -7,12 +7,7 @@ use Illuminate\Foundation\Http\FormRequest; # laravel built-in form request
 
 class ApiClientStore extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => ['required', 'unique:api_clients', 'max:255'],
