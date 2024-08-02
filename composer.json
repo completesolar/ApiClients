@@ -4,7 +4,7 @@
     "description": "Logic to give access to your app using API keys.",
     "license": "MIT",
     "require": {
-        "php": "8.1.*",
+        "php": "^8.2",
         "ext-json": "*",
         "guzzlehttp/guzzle": "7.*",
         "illuminate/contracts": "^10.0",
