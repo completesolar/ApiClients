@@ -1,10 +1,6 @@
 # ApiClients
 Helps to interact with the system using API login keys.
 
-## Requirements 
-- PHP 7.4;
-- Laravel 6;
-
 ## Installation
 You need to add this repo under `repositories` inside your `composer.json` and call
 ```
